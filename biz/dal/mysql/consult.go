@@ -36,6 +36,7 @@ func CreateConsultation(ctx context.Context, userID string, consult *model.Consu
 	}, nil
 }
 
+//保存咨询结果
 func SaveConsultResult(ctx context.Context, consultID int, result *model.ConsultResult) error {
 	// 将Car数组转换为JSON
 	carsJSON, err := json.Marshal(result.Result)
