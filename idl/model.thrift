@@ -10,7 +10,7 @@ struct UserInfo{
     5: double budge_max
     6: string preferred_type
     7: string preferred_brand
-    8: string status
+    8: i64 status
     9: string address
         10: required string created_at
         11: required string updated_at
@@ -57,6 +57,10 @@ struct Consultation{
     2: required ConsultResult consult_result
 }
 
+struct ConsultationList{
+    1:required list<Consultation> item,
+    2: required i64 total,
+}
 struct Gift{
     1:required i64 gift_id
     2:required string gift_name
@@ -78,4 +82,28 @@ struct Order{
     4: required i64 need_points,
     5: required string orderTime
     6: required i64 status,
+}
+struct Frequency{
+    1: required string frequency_name
+    2: required i64 value
+}
+struct Scene{
+        1: required string scene_name
+        2: required i64 value
+}
+struct Budget{
+    1: required string budget_name
+      2: required i64 value
+}
+struct FrequencyList{
+    1: required list<Frequency> item,
+    2:required i64 total
+}
+struct BudgetList{
+    1: required list<Budget> item,
+        2:required i64 total
+}
+struct SceneList{
+    1: required list<Scene> item,
+        2:required i64 total
 }

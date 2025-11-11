@@ -34,3 +34,26 @@ INSERT INTO `gift` (`gift_name`, `required_points`, `stock_quantity`, `cover_ima
 ('旧款导航仪', 1500, 0, 'https://gw.alicdn.com/imgextra/O1CN01LaxDuF1igwhRjCZyz_!!2212246924443.jpg_q50.jpg', 0),
 (' discontinued 车模', 2000, 0, 'https://img.alicdn.com/imgextra/i3/2454171253/O1CN01KIJEiO1L7vMWZuUSH_!!4611686018427383413-0-item_pic.jpg_q50.jpg', 0);
 
+
+INSERT INTO `user` (
+    `user_id`,
+    `username`,
+    `password`,
+    `phone`,
+    `budget_min`,
+    `budget_max`,
+    `preferred_type`,
+    `preferred_brand`,
+    `status`,
+    `address`
+) VALUES
+      ('admin', '林先生', '$2a$10$2Hw1OZ88zuXg3K8vthq10eK7VjUbrvPeetMOk92vuhpyhxZ7JTzxK', '1231242142', 10000.00, 100000.00, 'SUV', '比亚迪、吉利', 2, '福州大学旗山校区'),
+      ('user001', '张三', '$2a$10$2Hw1OZ88zuXg3K8vthq10eK7VjUbrvPeetMOk92vuhpyhxZ7JTzxK', '13800138001', 80000.00, 150000.00, '轿车', '丰田、本田', 1, '北京市朝阳区'),
+      ('user002', '李四', '$2a$10$2Hw1OZ88zuXg3K8vthq10eK7VjUbrvPeetMOk92vuhpyhxZ7JTzxK', '13800138002', 50000.00, 100000.00, 'SUV', '吉利、长安', 1, '上海市浦东新区'),
+      ('user003', '王五', '$2a$10$2Hw1OZ88zuXg3K8vthq10eK7VjUbrvPeetMOk92vuhpyhxZ7JTzxK', '13800138003', 120000.00, 250000.00, 'MPV', '别克、大众', 1, '广州市天河区'),
+      ('user004', '赵六', '$2a$10$2Hw1OZ88zuXg3K8vthq10eK7VjUbrvPeetMOk92vuhpyhxZ7JTzxK', '13800138004', 150000.00, 300000.00, '新能源', '特斯拉、比亚迪', 1, '深圳市南山区'),
+      ('user005', '钱七', '$2a$10$2Hw1OZ88zuXg3K8vthq10eK7VjUbrvPeetMOk92vuhpyhxZ7JTzxK', '13800138005', 60000.00, 120000.00, '轿车', '日产、现代', 1, '杭州市西湖区'),
+      ('user006', '孙八', '$2a$10$2Hw1OZ88zuXg3K8vthq10eK7VjUbrvPeetMOk92vuhpyhxZ7JTzxK', '13800138006', 200000.00, 500000.00, '豪华车', '奔驰、宝马', 1, '成都市武侯区'),
+      ('user007', '周九', '$2a$10$2Hw1OZ88zuXg3K8vthq10eK7VjUbrvPeetMOk92vuhpyhxZ7JTzxK', '13800138007', 30000.00, 80000.00, '小型车', '五菱、奇瑞', 1, '武汉市江汉区'),
+      ('user008', '吴十', '$2a$10$2Hw1OZ88zuXg3K8vthq10eK7VjUbrvPeetMOk92vuhpyhxZ7JTzxK', '13800138008', 100000.00, 200000.00, 'SUV', '长城、荣威', 1, '南京市鼓楼区'),
+      ('manager', '陈经理', '$2a$10$2Hw1OZ88zuXg3K8vthq10eK7VjUbrvPeetMOk92vuhpyhxZ7JTzxK', '13800138009', 0.00, 0.00, '', '', 2, '福州市仓山区');

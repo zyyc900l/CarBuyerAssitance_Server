@@ -18,20 +18,6 @@ SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- ----------------------------
--- Table structure for admin
--- ----------------------------
-DROP TABLE IF EXISTS `admin`;
-CREATE TABLE `admin`  (
-                          `admin_id` int NOT NULL AUTO_INCREMENT COMMENT '自增管理员ID',
-                          `admin_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '管理员用户名',
-                          `password` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '加密存储的密码',
-                          `role` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '普通管理员' COMMENT '角色（超级管理员/普通管理员）',
-                          `status` tinyint NULL DEFAULT 1 COMMENT '账号状态（0-禁用/1-正常）',
-                          PRIMARY KEY (`admin_id`) USING BTREE,
-                          UNIQUE INDEX `idx_admin_name`(`admin_name` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '管理员表' ROW_FORMAT = Dynamic;
-
--- ----------------------------
 -- Table structure for consultation
 -- ----------------------------
 DROP TABLE IF EXISTS `consultation`;
@@ -139,7 +125,7 @@ CREATE TABLE `user`  (
                          `budget_max` decimal(10, 2) NULL DEFAULT 0.00 COMMENT '最高购车预算（元）',
                          `preferred_type` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '偏好车型（SUV/轿车/MPV等）',
                          `preferred_brand` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '偏好品牌（多个用逗号分隔）',
-                         `status` tinyint NULL DEFAULT 1 COMMENT '账号状态（0-禁用/1-正常）',
+                         `status` tinyint NULL DEFAULT 1 COMMENT '账号状态（-1-禁用/1-正常/2-管理员）',
                          `address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '奖品收货地址',
                          `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
                          `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',

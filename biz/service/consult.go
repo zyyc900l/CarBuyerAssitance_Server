@@ -10,6 +10,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/cloudwego/hertz/pkg/app"
+	"math/rand"
+	"strings"
 	"time"
 )
 
@@ -34,6 +36,11 @@ func (svc *ConsultService) Consult(consult *model.Consult) (*model.ConsultResult
 	consultResult, err := utils.CallOpenAIWithConsult(svc.ctx, consult)
 	if err != nil {
 		return nil, fmt.Errorf("call openai error:" + err.Error())
+	}
+	for i, v := range consultResult.Result {
+		if strings.HasPrefix(v.ImageUrl, constants.UrlPrefix) { //当ai没找到图片
+			consultResult.Result[i].ImageUrl = defaultImage()
+		}
 	}
 	err = mysql.SaveConsultResult(svc.ctx, con.ConsultId, consultResult)
 	if err != nil {
@@ -107,4 +114,16 @@ func (svc *ConsultService) BuyGift(gift_id int64) (*mysql.Exchange, error) {
 	}
 	taskqueue.AddUpdateScoreTask(svc.ctx, constants.TaskQueue, p)
 	return info, nil
+}
+func defaultImage() string {
+	images := []string{
+		constants.SmallCar,
+		constants.MiddleCar,
+		constants.MpvCar,
+		constants.RunningCar,
+	}
+
+	// 随机选择一个图片
+	randIndex := rand.Intn(len(images))
+	return images[randIndex]
 }

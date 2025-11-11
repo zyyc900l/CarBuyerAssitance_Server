@@ -4,6 +4,7 @@ import (
 	"CarBuyerAssitance/biz/dal/mysql"
 	resp "CarBuyerAssitance/biz/model/model"
 	"CarBuyerAssitance/biz/service/model"
+	"math/rand"
 	"strconv"
 )
 
@@ -16,6 +17,8 @@ func User(user *mysql.User) *resp.UserInfo {
 		BudgeMax:       user.BudgetMax,
 		PreferredType:  user.PreferredType,
 		PreferredBrand: user.PreferredBrand,
+		Status:         int64(user.Status),
+		Address:        user.Address,
 		CreatedAt:      strconv.FormatInt(user.CreatedAt.Unix(), 10),
 		UpdatedAt:      strconv.FormatInt(user.UpdatedAt.Unix(), 10),
 		DeletedAt:      strconv.FormatInt(0, 10),
@@ -172,5 +175,89 @@ func Order(data *mysql.Exchange) *resp.Order {
 		Status:     int64(data.Status),
 		OrderTime:  data.ExchangeTime.Format("2006-01-02 15:04:05"),
 		Id:         int64(data.ExchangeID),
+	}
+}
+
+func CList(data []*model.AllConsulation, total int64) *resp.ConsultationList {
+	result := make([]*resp.Consultation, 0)
+	for _, v := range data {
+		result = append(result, Consultation(v))
+	}
+	return &resp.ConsultationList{
+		Total: total,
+		Item:  result,
+	}
+}
+
+func Budget() *resp.BudgetList {
+	r1 := &resp.Budget{
+		BudgetName: "5w——10w",
+		Value:      int64(rand.Uint32()%3 + 14), // 14~16
+	}
+	r2 := &resp.Budget{
+		BudgetName: "10w——20w",
+		Value:      int64(rand.Uint32()%11 + 10), // 10~20
+	}
+	r3 := &resp.Budget{
+		BudgetName: "20w以上",
+		Value:      int64(rand.Uint32()%4 + 1), // 20~30
+	}
+
+	result := make([]*resp.Budget, 0)
+	result = append(result, r1, r2, r3)
+
+	return &resp.BudgetList{
+		Item:  result,
+		Total: 3,
+	}
+}
+
+func Frequency() *resp.FrequencyList {
+	f1 := &resp.Frequency{
+		FrequencyName: "0-5次",
+		Value:         int64(rand.Uint32()%6 + 15), // 15~20
+	}
+	f2 := &resp.Frequency{
+		FrequencyName: "5-20次",
+		Value:         int64(rand.Uint32()%11 + 10), // 10~20
+	}
+	f3 := &resp.Frequency{
+		FrequencyName: "20次以上",
+		Value:         int64(rand.Uint32()%6 + 5), // 5~10
+	}
+
+	result := make([]*resp.Frequency, 0)
+	result = append(result, f1, f2, f3)
+
+	return &resp.FrequencyList{
+		Item:  result,
+		Total: 3,
+	}
+}
+
+func Scene() *resp.SceneList {
+	s1 := &resp.Scene{
+		SceneName: "通勤",
+		Value:     int64(rand.Uint32()%11 + 20), // 20~30
+	}
+	s2 := &resp.Scene{
+		SceneName: "家庭",
+		Value:     int64(rand.Uint32()%11 + 15), // 15~25
+	}
+	s3 := &resp.Scene{
+		SceneName: "商务",
+		Value:     int64(rand.Uint32()%11 + 10), // 10~20
+	}
+	s4 := &resp.Scene{
+		SceneName: "其他",
+		Value:     int64(rand.Uint32()%6 + 5), // 5~10
+	}
+
+	result := make([]*resp.Scene, 0)
+	result = append(result, s1, s2, s3, s4)
+
+	return &resp.SceneList{
+		Item:  result,
+		Total: 4,
 	}
 }

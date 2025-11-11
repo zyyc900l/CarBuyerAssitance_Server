@@ -36,6 +36,7 @@ const (
 	ServiceUserDeathCode      // 用户未激活、没有绑定相应邮箱
 	ServiceUserPasswordError  // 密码错误
 	ServiceUserNotExistCode
+	ServiceUserBanExistCode
 	ServiceGiftNotExistCode
 	ServiceGiftRunOutExistCode
 	ServicePointRunOutExistCode //积分不足

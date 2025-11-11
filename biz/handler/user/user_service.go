@@ -4,13 +4,12 @@ package user
 
 import (
 	"CarBuyerAssitance/biz/dal/mysql"
+	user "CarBuyerAssitance/biz/model/user"
 	"CarBuyerAssitance/biz/mw/jwt"
 	"CarBuyerAssitance/biz/pack"
 	"CarBuyerAssitance/biz/service"
 	"CarBuyerAssitance/pkg/errno"
 	"context"
-
-	user "CarBuyerAssitance/biz/model/user"
 	"github.com/cloudwego/hertz/pkg/app"
 )
 
@@ -30,6 +29,7 @@ func Register(ctx context.Context, c *app.RequestContext) {
 		Password: req.Password,
 		Phone:    req.PhoneNumber,
 		UserId:   req.Id,
+		Status:   1,
 	})
 	if err != nil {
 		pack.SendFailResponse(c, errno.ConvertErr(err))
@@ -62,6 +62,55 @@ func Login(ctx context.Context, c *app.RequestContext) {
 
 	c.Header("Access-Token", c.GetString("Access-Token"))
 	c.Header("Refresh-Token", c.GetString("Refresh-Token"))
+	resp.Data = pack.User(userInfo)
+	resp.Base = pack.BuildBaseResp(errno.Success)
+	pack.SendResponse(c, resp)
+}
+
+// QueryUserInfo .
+// @router /api/user/query/Info [GET]
+func QueryUserInfo(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req user.QueryUserInfoRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		pack.SendFailResponse(c, errno.NewErrNo(errno.ParamMissingErrorCode, "param missing:"+err.Error()))
+		return
+	}
+
+	resp := new(user.QueryUserInfoResponse)
+	userInfo, err := service.NewUserService(ctx, c).Query(req.UserID)
+	if err != nil {
+		pack.SendFailResponse(c, errno.ConvertErr(err))
+		return
+	}
+	resp.Data = pack.User(userInfo)
+	resp.Base = pack.BuildBaseResp(errno.Success)
+	pack.SendResponse(c, resp)
+}
+
+// UpdateUserInfo .
+// @router /api/user/update/Info [GET]
+func UpdateUserInfo(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req user.UpdateUserInfoRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		pack.SendFailResponse(c, errno.NewErrNo(errno.ParamMissingErrorCode, "param missing:"+err.Error()))
+		return
+	}
+	resp := new(user.UpdateUserInfoResponse)
+	userInfo, err := service.NewUserService(ctx, c).Update(&mysql.User{
+		BudgetMin:      req.BudgetMin,
+		BudgetMax:      req.BudgetMax,
+		Address:        req.Address,
+		PreferredBrand: req.PreferredBrand,
+		PreferredType:  req.PreferredType,
+	})
+	if err != nil {
+		pack.SendFailResponse(c, errno.ConvertErr(err))
+		return
+	}
 	resp.Data = pack.User(userInfo)
 	resp.Base = pack.BuildBaseResp(errno.Success)
 	pack.SendResponse(c, resp)

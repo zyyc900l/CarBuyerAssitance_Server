@@ -32,8 +32,3 @@ networks:
   carBuyerAssitance:
     driver: bridge
     name: carBuyerAssitance
-
-
-
-
-

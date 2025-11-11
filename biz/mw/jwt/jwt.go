@@ -18,6 +18,7 @@ import (
 
 var (
 	identityKey               = constants.ContextUserId
+	TypeKey                   = constants.TypeKey
 	AccessTokenJwtMiddleware  *jwt.HertzJWTMiddleware
 	RefreshTokenJwtMiddleware *jwt.HertzJWTMiddleware
 )
@@ -35,7 +36,14 @@ func AccessTokenJwt() {
 		PayloadFunc: func(data interface{}) jwt.MapClaims {
 			if v, ok := data.(*mysql.User); ok {
 				id := v.UserId
+				var role string
+				if v.Status == 1 {
+					role = "user"
+				} else {
+					role = "admin"
+				}
 				return jwt.MapClaims{
+					TypeKey:     role,
 					identityKey: id,
 				}
 			}
@@ -91,7 +99,14 @@ func RefreshTokenJwt() {
 		PayloadFunc: func(data interface{}) jwt.MapClaims {
 			if v, ok := data.(*mysql.User); ok {
 				id := v.UserId
+				var role string
+				if v.Status == 1 {
+					role = "user"
+				} else {
+					role = "admin"
+				}
 				return jwt.MapClaims{
+					TypeKey:     role,
 					identityKey: id,
 				}
 			}
@@ -135,7 +150,7 @@ func RefreshTokenJwt() {
 	}
 }
 
-func IsAccessTokenAvailable(ctx context.Context, c *app.RequestContext) error {
+func IsAccessTokenAvailable(ctx context.Context, c *app.RequestContext, rank int) error {
 	claims, err := AccessTokenJwtMiddleware.GetClaimsFromJWT(ctx, c)
 	if err != nil {
 		return errno.AuthNoToken
@@ -164,15 +179,26 @@ func IsAccessTokenAvailable(ctx context.Context, c *app.RequestContext) error {
 
 	if identity != nil {
 		c.Set(AccessTokenJwtMiddleware.IdentityKey, identity) //将用户id解析出存入上下文
-		hlog.Info("dd")
 	}
+	var access int
+	if claims[constants.TypeKey] == "admin" {
+		access = 3
+	} else if claims[constants.TypeKey] == "counselor" {
+		access = 2
+	} else if claims[constants.TypeKey] == "user" {
+		access = 1
+	}
+	if access < rank {
+		return errno.NewErrNo(errno.AuthPermissionCode, "only higher token level access")
+	}
+
 	if !AccessTokenJwtMiddleware.Authorizator(identity, ctx, c) { //
 		return errno.AuthInvalid
 	}
 
 	return nil
 }
-func IsRefreshTokenAvailable(ctx context.Context, c *app.RequestContext) error {
+func IsRefreshTokenAvailable(ctx context.Context, c *app.RequestContext, rank int) error {
 	claims, err := RefreshTokenJwtMiddleware.GetClaimsFromJWT(ctx, c)
 	if err != nil {
 		return errno.AuthNoToken
@@ -202,6 +228,17 @@ func IsRefreshTokenAvailable(ctx context.Context, c *app.RequestContext) error {
 	if identity != nil {
 		c.Set(RefreshTokenJwtMiddleware.IdentityKey, identity)
 		hlog.Info("dd")
+	}
+	var access int
+	if claims[constants.TypeKey] == "admin" {
+		access = 3
+	} else if claims[constants.TypeKey] == "counselor" {
+		access = 2
+	} else if claims[constants.TypeKey] == "user" {
+		access = 1
+	}
+	if access < rank {
+		return errno.NewErrNo(errno.AuthPermissionCode, "only higher token level access")
 	}
 	if !RefreshTokenJwtMiddleware.Authorizator(identity, ctx, c) {
 		return errno.AuthInvalid

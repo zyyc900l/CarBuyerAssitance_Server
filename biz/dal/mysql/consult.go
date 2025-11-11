@@ -106,6 +106,104 @@ func QueryConsultMessage(ctx context.Context, consultID int) (*model.AllConsulat
 	return allConsultation, nil
 }
 
+func QueryAllConsultMessages(ctx context.Context, page, pageSize int) ([]*model.AllConsulation, int64, error) {
+	var (
+		dbConsults []Consultation
+		total      int64
+	)
+
+	// 计算偏移量
+	offset := (page - 1) * pageSize
+
+	// 查询咨询记录总数
+	if err := db.WithContext(ctx).Table(constants.TableConsult).
+		Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	// 查询咨询记录列表
+	if err := db.WithContext(ctx).Table(constants.TableConsult).
+		Order("created_at DESC").
+		Offset(offset).
+		Limit(pageSize).
+		Find(&dbConsults).Error; err != nil {
+		return nil, 0, err
+	}
+
+	// 如果没有数据，直接返回空结果
+	if len(dbConsults) == 0 {
+		return []*model.AllConsulation{}, total, nil
+	}
+
+	// 收集所有咨询ID
+	consultIDs := make([]int, 0, len(dbConsults))
+	for _, consult := range dbConsults {
+		consultIDs = append(consultIDs, consult.ConsultID)
+	}
+
+	// 批量查询咨询结果
+	var dbResults []ConsultResult
+	if err := db.WithContext(ctx).Table(constants.TableConsultResult).
+		Where("consult_id IN ?", consultIDs).
+		Find(&dbResults).Error; err != nil {
+		return nil, 0, err
+	}
+
+	// 构建咨询结果映射表，方便查找
+	resultMap := make(map[int]ConsultResult)
+	for _, result := range dbResults {
+		resultMap[result.ConsultID] = result
+	}
+
+	// 构建返回结果
+	allConsultations := make([]*model.AllConsulation, 0, len(dbConsults))
+	for _, dbConsult := range dbConsults {
+		// 获取对应的咨询结果
+		dbResult, exists := resultMap[dbConsult.ConsultID]
+		if !exists {
+			// 如果没有咨询结果，跳过或创建空结果
+			continue
+		}
+
+		// 解析JSON格式的推荐车辆
+		var cars []model.Car
+		if dbResult.RecommendCars != "" {
+			if err := json.Unmarshal([]byte(dbResult.RecommendCars), &cars); err != nil {
+				// 如果解析失败，使用空数组继续处理
+				cars = []model.Car{}
+			}
+		}
+
+		// 构建咨询结果
+		consultResult := model.ConsultResult{
+			Analysis: dbResult.Analysis,
+			Proposal: dbResult.Proposal,
+			Result:   cars,
+		}
+
+		// 构建咨询信息
+		consultation := model.Consultation{
+			UserId:          dbConsult.UserID,
+			ConsultId:       dbConsult.ConsultID,
+			BudgetRange:     dbConsult.BudgetRange,
+			PreferredType:   dbConsult.PreferredType,
+			UseCase:         dbConsult.UseCase,
+			FuelType:        dbConsult.FuelType,
+			BrandPreference: dbConsult.BrandPreference,
+		}
+
+		// 构建完整结果
+		allConsultation := &model.AllConsulation{
+			Consultation:  consultation,
+			ConsultResult: consultResult,
+		}
+
+		allConsultations = append(allConsultations, allConsultation)
+	}
+
+	return allConsultations, total, nil
+}
+
 func GetOnlineGifts(ctx context.Context) ([]*Gift, error) {
 	var gifts []*Gift
 	err := db.WithContext(ctx).

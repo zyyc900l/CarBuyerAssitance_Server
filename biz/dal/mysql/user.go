@@ -47,3 +47,44 @@ func GetUserInfoByRoleId(ctx context.Context, role_id string) (*User, error) {
 	}
 	return userInfo, nil
 }
+func DeleteUser(ctx context.Context, user_id string) error {
+	err := db.WithContext(ctx).
+		Table(constants.TableUser).
+		Where("user_id = ?", user_id).
+		Update("status", -1).
+		Error
+	if err != nil {
+		return errno.NewErrNo(errno.InternalDatabaseErrorCode, "delete user Info error:"+err.Error())
+	}
+	return nil
+}
+
+func UpdateUserInfo(ctx context.Context, user *User) (*User, error) {
+	updateData := map[string]interface{}{
+		"budget_min":      user.BudgetMin,
+		"budget_max":      user.BudgetMax,
+		"preferred_type":  user.PreferredType,
+		"preferred_brand": user.PreferredBrand,
+		"address":         user.Address,
+	}
+
+	err := db.WithContext(ctx).
+		Table(constants.TableUser).
+		Where("user_id = ?", user.UserId).
+		Updates(updateData).Error
+	if err != nil {
+		return nil, errno.NewErrNo(errno.InternalDatabaseErrorCode, "update user info error: "+err.Error())
+	}
+
+	// 查询更新后的用户数据
+	var updatedUser *User
+	err = db.WithContext(ctx).
+		Table(constants.TableUser).
+		Where("user_id = ?", user.UserId).
+		Find(&updatedUser).Error
+	if err != nil {
+		return nil, errno.NewErrNo(errno.InternalDatabaseErrorCode, "update user info error: "+err.Error())
+	}
+	return updatedUser, nil
+
+}

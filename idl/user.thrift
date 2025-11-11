@@ -30,7 +30,28 @@ struct ProposeFeedbackRequest{
 struct ProposeFeedbackResponse{
      1: required model.BaseResp base,
 }
+struct QueryUserInfoRequest{
+    1: required string user_id
+}
+struct QueryUserInfoResponse{
+        1: required model.BaseResp base,
+        2: required model.UserInfo data,
+}
+struct UpdateUserInfoRequest{
+    1: required string userId
+        4:required double budget_min
+        5: required double budget_max
+        6:required string preferred_type
+        7:required  string preferred_brand
+            9: required string address
+}
+struct UpdateUserInfoResponse{
+            1: required model.BaseResp base,
+            2: required model.UserInfo data,
+}
 service UserService {
     RegisterResponse Register(1: RegisterRequest req)(api.post = "/api/user/register"),
     LoginResponse Login(1: LoginRequest req)(api.post = "/api/user/login"),
+    QueryUserInfoResponse QueryUserInfo(1:QueryUserInfoRequest req)(api.get="/api/user/query/Info"),
+    UpdateUserInfoResponse UpdateUserInfo(1:UpdateUserInfoRequest req)(api.put="/api/user/update/Info"),
 }
