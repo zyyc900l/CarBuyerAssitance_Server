@@ -31,10 +31,12 @@ struct QueryAllConsultResponse{
             1: required model.BaseResp base,
             2: required model.ConsultationList data,
 }
-struct QueryARequest{
+struct QueryARequest
+{
 
 }
-struct QueryAResponse{
+struct QueryAResponse
+{
      1: required model.BaseResp base,
      2: required model.FrequencyList frequency,
      3: required model.BudgetList budget,
