@@ -1,0 +1,21 @@
+mysql:
+  addr: 0.0.0.0:3306
+  database: carBuyerAssitance
+  username: carBuyerAssitance
+  password: carBuyerAssitance
+  charset: utf8mb4
+
+
+openai:
+  api-key: "sk-742e4dc349d2490cb9e741de22437f9c"
+  api-url: "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"
+  api-model: "qwen-max"
+
+
+services:
+  main:
+    name : main
+    load-balance: true
+    addr:
+      - 0.0.0.0:9999
+
