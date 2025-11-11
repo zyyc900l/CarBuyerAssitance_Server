@@ -38,7 +38,7 @@ clean:
 
 .PHONY: build
 build:
-	docker build -t judgemore:latest -f docker/Dockerfile .
+	docker build -t carbuyerassitance:latest -f docker/Dockerfile .
 
 # 清除所有构建产物、compose 环境和它的数据
 .PHONY: clean-all
