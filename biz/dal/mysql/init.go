@@ -2,9 +2,10 @@ package mysql
 
 import (
 	"CarBuyerAssitance/pkg/utils"
+	"time"
+
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"time"
 )
 
 var db *gorm.DB
