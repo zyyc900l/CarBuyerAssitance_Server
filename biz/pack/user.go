@@ -19,8 +19,8 @@ func User(user *mysql.User) *resp.UserInfo {
 		PreferredBrand: user.PreferredBrand,
 		Status:         int64(user.Status),
 		Address:        user.Address,
-		CreatedAt:      strconv.FormatInt(user.CreatedAt.Unix(), 10),
-		UpdatedAt:      strconv.FormatInt(user.UpdatedAt.Unix(), 10),
+		CreatedAt:      user.CreatedAt.Format("2006-01-02 15:04:05"),
+		UpdatedAt:      user.UpdatedAt.Format("2006-01-02 15:04:05"),
 		DeletedAt:      strconv.FormatInt(0, 10),
 	}
 }
